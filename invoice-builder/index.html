@@ -8,103 +8,21 @@
   </head>
   <body>
     <header class="app-header">
-      <div class="brand">
-        <img src="assets/logo.png" alt="Amine Belmejdoub logo">
-        <div>
-          <p class="eyebrow">Self-employed UK invoice builder</p>
-          <h1>Invoice Builder</h1>
-        </div>
-      </div>
-      <div class="header-actions">
-        <button class="ghost" type="button" id="newInvoiceBtn">New invoice</button>
-        <button type="button" id="saveInvoiceBtn">Save invoice</button>
-        <button type="button" id="printBtn">PDF / Print</button>
-        <button class="accent" type="button" id="emailBtn">Send by email</button>
-      </div>
+      <div class="brand"><img src="assets/logo.svg" alt="Amine Belmejdoub logo"><div><p class="eyebrow">Self-employed UK invoice builder</p><h1>Invoice Builder</h1></div></div>
+      <div class="header-actions"><button class="ghost" type="button" id="newInvoiceBtn">New invoice</button><button type="button" id="saveInvoiceBtn">Save invoice</button><button type="button" id="printBtn">PDF / Print</button><button class="accent" type="button" id="emailBtn">Send by email</button></div>
     </header>
-
     <main class="workspace">
       <section class="editor" aria-label="Invoice form">
-        <div class="panel compact">
-          <div class="panel-title">
-            <h2>Invoice Details</h2>
-            <span id="saveState">Not saved</span>
-          </div>
-          <div class="grid two">
-            <label>Invoice number<input id="invoiceNumber" type="text" readonly></label>
-            <label>Status<select id="invoiceStatus"><option>Draft</option><option>Sent</option><option>Paid</option><option>Overdue</option></select></label>
-            <label>Issue date<input id="issueDate" type="date"></label>
-            <label>Due date<input id="dueDate" type="date"></label>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h2>Your Details</h2>
-          <div class="grid two">
-            <label>Trading name<input id="sellerName" type="text" value="Amine Belmejdoub"></label>
-            <label>Email<input id="sellerEmail" type="email" placeholder="you@example.com"></label>
-            <label class="wide">Address<textarea id="sellerAddress" rows="3" placeholder="Street, city, postcode, United Kingdom"></textarea></label>
-            <label>UTR or reference<input id="sellerTaxRef" type="text" placeholder="Optional"></label>
-            <label>Payment terms<select id="paymentTerms"><option value="7">7 days</option><option value="14" selected>14 days</option><option value="30">30 days</option><option value="45">45 days</option></select></label>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h2>Customer</h2>
-          <div class="grid two">
-            <label>Customer name<input id="customerName" type="text" placeholder="Client or organisation"></label>
-            <label>Customer email<input id="customerEmail" type="email" placeholder="client@example.com"></label>
-            <label class="wide">Customer address<textarea id="customerAddress" rows="3" placeholder="Billing address"></textarea></label>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-title"><h2>Work Items</h2><button class="ghost" type="button" id="addLineBtn">Add item</button></div>
-          <div class="line-editor" id="lineEditor"></div>
-        </div>
-
-        <div class="panel">
-          <h2>Payment</h2>
-          <div class="grid two">
-            <label>VAT rate<select id="vatRate"><option value="0" selected>No VAT</option><option value="0.05">5%</option><option value="0.20">20%</option></select></label>
-            <label>Currency<select id="currency"><option value="GBP" selected>GBP</option><option value="EUR">EUR</option><option value="USD">USD</option></select></label>
-            <label>Bank name<input id="bankName" type="text" placeholder="Bank name"></label>
-            <label>Account name<input id="accountName" type="text" placeholder="Account holder"></label>
-            <label>Sort code<input id="sortCode" type="text" placeholder="00-00-00"></label>
-            <label>Account number<input id="accountNumber" type="text" placeholder="00000000"></label>
-            <label class="wide">Notes<textarea id="notes" rows="3" placeholder="Thank you for your business."></textarea></label>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-title"><h2>Register</h2><span id="registerCount">0 invoices</span></div>
-          <div class="register-actions"><button class="ghost" type="button" id="exportCsvBtn">Export CSV</button><button class="ghost" type="button" id="exportExcelBtn">Export Excel</button><button class="ghost" type="button" id="downloadJsonBtn">Backup JSON</button></div>
-          <div class="table-wrap"><table id="registerTable"><thead><tr><th>Invoice</th><th>Customer</th><th>Issue date</th><th>Due date</th><th>Status</th><th>Total</th></tr></thead><tbody></tbody></table></div>
-        </div>
-
-        <details class="panel sync-panel">
-          <summary>GitHub register sync</summary>
-          <div class="grid two sync-grid">
-            <label>Repository<input id="githubRepo" type="text" value="Europolytech/assets"></label>
-            <label>Branch<input id="githubBranch" type="text" value="main"></label>
-            <label>Register path<input id="githubPath" type="text" value="invoice-builder/invoice-register.csv"></label>
-            <label>GitHub token<input id="githubToken" type="password" placeholder="Fine-grained token"></label>
-          </div>
-          <button type="button" id="syncGithubBtn">Sync CSV to GitHub</button>
-          <p id="syncStatus" role="status"></p>
-        </details>
+        <div class="panel compact"><div class="panel-title"><h2>Invoice Details</h2><span id="saveState">Not saved</span></div><div class="grid two"><label>Invoice number<input id="invoiceNumber" type="text" readonly></label><label>Status<select id="invoiceStatus"><option>Draft</option><option>Sent</option><option>Paid</option><option>Overdue</option></select></label><label>Issue date<input id="issueDate" type="date"></label><label>Due date<input id="dueDate" type="date"></label></div></div>
+        <div class="panel"><h2>Your Details</h2><div class="grid two"><label>Trading name<input id="sellerName" type="text" value="Amine Belmejdoub"></label><label>Email<input id="sellerEmail" type="email" placeholder="you@example.com"></label><label class="wide">Address<textarea id="sellerAddress" rows="3" placeholder="Street, city, postcode, United Kingdom"></textarea></label><label>UTR or reference<input id="sellerTaxRef" type="text" placeholder="Optional"></label><label>Payment terms<select id="paymentTerms"><option value="7">7 days</option><option value="14" selected>14 days</option><option value="30">30 days</option><option value="45">45 days</option></select></label></div></div>
+        <div class="panel"><h2>Customer</h2><div class="grid two"><label>Customer name<input id="customerName" type="text" placeholder="Client or organisation"></label><label>Customer email<input id="customerEmail" type="email" placeholder="client@example.com"></label><label class="wide">Customer address<textarea id="customerAddress" rows="3" placeholder="Billing address"></textarea></label></div></div>
+        <div class="panel"><div class="panel-title"><h2>Work Items</h2><button class="ghost" type="button" id="addLineBtn">Add item</button></div><div class="line-editor" id="lineEditor"></div></div>
+        <div class="panel"><h2>Payment</h2><div class="grid two"><label>VAT rate<select id="vatRate"><option value="0" selected>No VAT</option><option value="0.05">5%</option><option value="0.20">20%</option></select></label><label>Currency<select id="currency"><option value="GBP" selected>GBP</option><option value="EUR">EUR</option><option value="USD">USD</option></select></label><label>Bank name<input id="bankName" type="text" placeholder="Bank name"></label><label>Account name<input id="accountName" type="text" placeholder="Account holder"></label><label>Sort code<input id="sortCode" type="text" placeholder="00-00-00"></label><label>Account number<input id="accountNumber" type="text" placeholder="00000000"></label><label class="wide">Notes<textarea id="notes" rows="3" placeholder="Thank you for your business."></textarea></label></div></div>
+        <div class="panel"><div class="panel-title"><h2>Register</h2><span id="registerCount">0 invoices</span></div><div class="register-actions"><button class="ghost" type="button" id="exportCsvBtn">Export CSV</button><button class="ghost" type="button" id="exportExcelBtn">Export Excel</button><button class="ghost" type="button" id="downloadJsonBtn">Backup JSON</button></div><div class="table-wrap"><table id="registerTable"><thead><tr><th>Invoice</th><th>Customer</th><th>Issue date</th><th>Due date</th><th>Status</th><th>Total</th></tr></thead><tbody></tbody></table></div></div>
+        <details class="panel sync-panel"><summary>GitHub register sync</summary><div class="grid two sync-grid"><label>Repository<input id="githubRepo" type="text" value="Europolytech/assets"></label><label>Branch<input id="githubBranch" type="text" value="main"></label><label>Register path<input id="githubPath" type="text" value="invoice-builder/invoice-register.csv"></label><label>GitHub token<input id="githubToken" type="password" placeholder="Fine-grained token"></label></div><button type="button" id="syncGithubBtn">Sync CSV to GitHub</button><p id="syncStatus" role="status"></p></details>
       </section>
-
-      <aside class="preview-shell" aria-label="Invoice preview">
-        <article class="invoice" id="invoicePreview">
-          <section class="invoice-head"><img src="assets/logo.png" alt="Amine Belmejdoub logo"><div><p>Invoice</p><h2 id="previewNumber">AB-2026-0001</h2><span id="previewStatus">Draft</span></div></section>
-          <section class="invoice-meta"><div><h3>From</h3><p id="previewSeller"></p></div><div><h3>Bill To</h3><p id="previewCustomer"></p></div><div><h3>Dates</h3><p id="previewDates"></p></div></section>
-          <table class="invoice-lines"><thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead><tbody id="previewLines"></tbody></table>
-          <section class="invoice-bottom"><div><h3>Payment Details</h3><p id="previewPayment"></p><h3>Notes</h3><p id="previewNotes"></p></div><div class="totals"><div><span>Subtotal</span><strong id="subtotal">0.00</strong></div><div><span>VAT</span><strong id="vatTotal">0.00</strong></div><div class="grand"><span>Total</span><strong id="grandTotal">0.00</strong></div></div></section>
-        </article>
-      </aside>
+      <aside class="preview-shell" aria-label="Invoice preview"><article class="invoice" id="invoicePreview"><section class="invoice-head"><img src="assets/logo.svg" alt="Amine Belmejdoub logo"><div><p>Invoice</p><h2 id="previewNumber">AB-2026-0001</h2><span id="previewStatus">Draft</span></div></section><section class="invoice-meta"><div><h3>From</h3><p id="previewSeller"></p></div><div><h3>Bill To</h3><p id="previewCustomer"></p></div><div><h3>Dates</h3><p id="previewDates"></p></div></section><table class="invoice-lines"><thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead><tbody id="previewLines"></tbody></table><section class="invoice-bottom"><div><h3>Payment Details</h3><p id="previewPayment"></p><h3>Notes</h3><p id="previewNotes"></p></div><div class="totals"><div><span>Subtotal</span><strong id="subtotal">0.00</strong></div><div><span>VAT</span><strong id="vatTotal">0.00</strong></div><div class="grand"><span>Total</span><strong id="grandTotal">0.00</strong></div></div></section></article></aside>
     </main>
-
     <script src="script.js"></script>
   </body>
 </html>
