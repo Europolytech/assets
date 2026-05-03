@@ -1,5 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" role="img" aria-label="Amine Belmejdoub logo">
-  <rect width="1600" height="1200" fill="#000"/>
-  <rect x="160" y="730" width="1280" height="140" fill="#fff"/>
-  <text x="800" y="824" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="400" letter-spacing="6" fill="#000">AMINE BELMEJDOUB</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 578" role="img" aria-label="Amine Belmejdoub Marketing and Communication logo">
+  <rect width="1040" height="578" fill="#fff"/>
+  <g fill="none" stroke="#000" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M36 450 L260 48 L485 450"/>
+    <path d="M175 218 H345" stroke-width="44"/>
+    <path d="M588 48 H800 C924 48 988 84 988 174 C988 256 929 296 805 296 H588 Z"/>
+    <path d="M588 296 H816 C950 296 1011 332 1011 418 C1011 504 934 530 806 530 H588 Z"/>
+  </g>
+  <rect x="150" y="206" width="760" height="112" fill="#fff"/>
+  <text x="520" y="285" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="74" font-weight="400" letter-spacing="4" fill="#000">AMINE BELMEJDOUB</text>
+  <text x="520" y="540" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="400" letter-spacing="2" fill="#000">MARKETING &amp; COMMUNICATION</text>
 </svg>
