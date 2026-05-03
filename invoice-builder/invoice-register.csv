@@ -1,0 +1,2 @@
+"Invoice Number","Status","Customer Name","Customer Email","Issue Date","Due Date","Currency","Subtotal","VAT","Total","Seller","Saved At"
+"AB-2026-0001","Draft","Example Customer","customer@example.com","2026-05-03","2026-05-17","GBP","450.00","0.00","450.00","Amine Belmejdoub","2026-05-03T12:00:00Z"
