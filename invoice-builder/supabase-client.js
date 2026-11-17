@@ -17,7 +17,10 @@ export function createClient(projectUrl, publishableKey) {
     listeners.forEach(fn => { try { fn(event, session); } catch(e) { console.error(e); } });
   }
   function parseError(resp, value) {
-    return new Error(value?.msg || value?.message || value?.error_description || value?.error || ('HTTP ' + resp.status));
+    const error = new Error(value?.msg || value?.message || value?.error_description || value?.error || ('HTTP ' + resp.status));
+    error.code = value?.code || null;
+    error.status = resp.status;
+    return error;
   }
   async function request(path, options = {}, bearer = null) {
     const headers = {
