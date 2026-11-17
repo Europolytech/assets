@@ -1,4 +1,4 @@
-const storeKey="abInvoiceBuilder";const sequenceKey="abInvoiceSequence";const $=(id)=>document.getElementById(id);const fields=["invoiceNumber","invoiceStatus","issueDate","dueDate","sellerName","sellerEmail","sellerAddress","sellerTaxRef","paymentTerms","customerName","customerEmail","customerAddress","vatRate","currency","bankName","accountName","sortCode","accountNumber","notes"];const state={savedInvoiceNumber:null,lines:[],invoices:[],payments:[]};function todayISO(){return new Date().toISOString().slice(0,10)}function addDaysISO(dateValue,days){const date=new Date(`${dateValue}T12:00:00`);date.setDate(date.getDate()+Number(days));return date.toISOString().slice(0,10)}function nextInvoiceNumber(commit=false){const year=new Date().getFullYear();const raw=localStorage.getItem(sequenceKey);const sequence=raw?JSON.parse(raw):{};const next=(sequence[year]||0)+1;if(commit){sequence[year]=next;localStorage.setItem(sequenceKey,JSON.stringify(sequence))}return `AB-${year}-${String(next).padStart(4,"0")}`}function money(value,currency=$("currency").value){return new Intl.NumberFormat("en-GB",{style:"currency",currency}).format(Number(value)||0)}function loadStore(){/* Existing localStorage is read only during explicit migration. */}
+const storeKey="abInvoiceBuilder";const $=(id)=>document.getElementById(id);const fields=["invoiceNumber","invoiceStatus","issueDate","dueDate","sellerName","sellerEmail","sellerAddress","sellerTaxRef","paymentTerms","customerName","customerEmail","customerAddress","vatRate","currency","bankName","accountName","sortCode","accountNumber","notes"];const state={savedInvoiceNumber:null,savedInvoiceId:null,lines:[],invoices:[],payments:[]};function todayISO(){return new Date().toISOString().slice(0,10)}function addDaysISO(dateValue,days){const date=new Date(`${dateValue}T12:00:00`);date.setDate(date.getDate()+Number(days));return date.toISOString().slice(0,10)}function money(value,currency=$("currency").value){return new Intl.NumberFormat("en-GB",{style:"currency",currency}).format(Number(value)||0)}function loadStore(){/* Existing localStorage is read only during explicit migration. */}
 function persistStore(){/* Never save financial records to localStorage. */}
 function buildDefaultInvoice(){
  const issueDate=todayISO();
@@ -7,33 +7,74 @@ function buildDefaultInvoice(){
  $("dueDate").value=addDaysISO(issueDate,$("paymentTerms").value);
  $("sellerName").value=$("sellerName").value||"Amine Belmejdoub";
  $("notes").value=$("notes").value||"Thank you for your business.";
- state.savedInvoiceNumber=null;state.lines=[{description:"Professional services",quantity:1,rate:0}];
+ state.savedInvoiceNumber=null;state.savedInvoiceId=null;state.lines=[{description:"Professional services",quantity:1,rate:0}];
  renderLines();updatePreview();renderPayments();setSaveState("Not saved");
 }
-function collectInvoice(){const data=Object.fromEntries(fields.map((field)=>[field,$(field).value]));data.lines=state.lines.map((line)=>({description:line.description.trim(),quantity:Number(line.quantity)||0,rate:Number(line.rate)||0,amount:(Number(line.quantity)||0)*(Number(line.rate)||0)}));const subtotal=data.lines.reduce((sum,line)=>sum+line.amount,0);const vat=subtotal*Number(data.vatRate||0);data.subtotal=subtotal;data.vat=vat;data.total=subtotal+vat;data.savedAt=new Date().toISOString();return data}function previewBlock(...parts){return parts.filter(Boolean).join("\n")}function updatePreview(){const invoice=collectInvoice();$("previewNumber").textContent=invoice.invoiceNumber;$("previewStatus").textContent=invoice.invoiceStatus;$("previewSeller").textContent=previewBlock(invoice.sellerName,invoice.sellerAddress,invoice.sellerEmail,invoice.sellerTaxRef?`UTR/ref: ${invoice.sellerTaxRef}`:"");$("previewCustomer").textContent=previewBlock(invoice.customerName||"Customer name",invoice.customerAddress,invoice.customerEmail);$("previewDates").textContent=previewBlock(`Issued: ${formatDate(invoice.issueDate)}`,`Due: ${formatDate(invoice.dueDate)}`,`Terms: ${invoice.paymentTerms} days`);$("previewPayment").textContent=previewBlock(invoice.bankName,invoice.accountName?`Account: ${invoice.accountName}`:"",invoice.sortCode?`Sort code: ${invoice.sortCode}`:"",invoice.accountNumber?`Account number: ${invoice.accountNumber}`:"")||"Payment details";$("previewNotes").textContent=invoice.notes||"Thank you for your business.";$("subtotal").textContent=money(invoice.subtotal,invoice.currency);$("vatTotal").textContent=money(invoice.vat,invoice.currency);$("grandTotal").textContent=money(invoice.total,invoice.currency);const body=$("previewLines");body.innerHTML="";invoice.lines.forEach((line)=>{const tr=document.createElement("tr");tr.innerHTML=`<td>${escapeHtml(line.description||"Work item")}</td><td>${line.quantity}</td><td>${money(line.rate,invoice.currency)}</td><td>${money(line.amount,invoice.currency)}</td>`;body.appendChild(tr)})}function formatDate(value){if(!value)return"";return new Intl.DateTimeFormat("en-GB",{dateStyle:"medium"}).format(new Date(`${value}T12:00:00`))}function escapeHtml(value){return String(value).replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[char])}function renderLines(){const editor=$("lineEditor");editor.innerHTML="";state.lines.forEach((line,index)=>{const row=document.createElement("div");row.className="line-row";row.innerHTML=`<label>Description<input type="text" value="${escapeHtml(line.description)}" data-line="${index}" data-key="description"></label><label>Qty<input type="number" min="0" step="0.01" value="${line.quantity}" data-line="${index}" data-key="quantity"></label><label>Rate<input type="number" min="0" step="0.01" value="${line.rate}" data-line="${index}" data-key="rate"></label><button class="remove-line" type="button" title="Remove item" data-remove="${index}">x</button>`;editor.appendChild(row)})}function setSaveState(text){$("saveState").textContent=text}async function saveInvoice(){
- if(!await requireCloud())return;
+function collectInvoice(){const data=Object.fromEntries(fields.map((field)=>[field,$(field).value]));data.lines=state.lines.map((line)=>({description:line.description.trim(),quantity:Number(line.quantity)||0,rate:Number(line.rate)||0,amount:(Number(line.quantity)||0)*(Number(line.rate)||0)}));const subtotal=data.lines.reduce((sum,line)=>sum+line.amount,0);const vat=subtotal*Number(data.vatRate||0);data.subtotal=subtotal;data.vat=vat;data.total=subtotal+vat;data.savedAt=new Date().toISOString();return data}function previewBlock(...parts){return parts.filter(Boolean).join("\n")}function updatePreview(){const invoice=collectInvoice();$("previewNumber").textContent=invoice.invoiceNumber;$("previewStatus").textContent=invoice.invoiceStatus;$("previewSeller").textContent=previewBlock(invoice.sellerName,invoice.sellerAddress,invoice.sellerEmail,invoice.sellerTaxRef?`UTR/ref: ${invoice.sellerTaxRef}`:"");$("previewCustomer").textContent=previewBlock(invoice.customerName||"Customer name",invoice.customerAddress,invoice.customerEmail);$("previewDates").textContent=previewBlock(`Issued: ${formatDate(invoice.issueDate)}`,`Due: ${formatDate(invoice.dueDate)}`,`Terms: ${invoice.paymentTerms} days`);$("previewPayment").textContent=previewBlock(invoice.bankName,invoice.accountName?`Account: ${invoice.accountName}`:"",invoice.sortCode?`Sort code: ${invoice.sortCode}`:"",invoice.accountNumber?`Account number: ${invoice.accountNumber}`:"")||"Payment details";$("previewNotes").textContent=invoice.notes||"Thank you for your business.";$("subtotal").textContent=money(invoice.subtotal,invoice.currency);$("vatTotal").textContent=money(invoice.vat,invoice.currency);$("grandTotal").textContent=money(invoice.total,invoice.currency);const body=$("previewLines");body.innerHTML="";invoice.lines.forEach((line)=>{const tr=document.createElement("tr");tr.innerHTML=`<td>${escapeHtml(line.description||"Work item")}</td><td>${line.quantity}</td><td>${money(line.rate,invoice.currency)}</td><td>${money(line.amount,invoice.currency)}</td>`;body.appendChild(tr)})}function formatDate(value){if(!value)return"";return new Intl.DateTimeFormat("en-GB",{dateStyle:"medium"}).format(new Date(`${value}T12:00:00`))}function escapeHtml(value){return String(value).replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[char])}function renderLines(){const editor=$("lineEditor");editor.innerHTML="";state.lines.forEach((line,index)=>{const row=document.createElement("div");row.className="line-row";row.innerHTML=`<label>Description<input type="text" value="${escapeHtml(line.description)}" data-line="${index}" data-key="description"></label><label>Qty<input type="number" min="0" step="0.01" value="${line.quantity}" data-line="${index}" data-key="quantity"></label><label>Rate<input type="number" min="0" step="0.01" value="${line.rate}" data-line="${index}" data-key="rate"></label><button class="remove-line" type="button" title="Remove item" data-remove="${index}">x</button>`;editor.appendChild(row)})}function setSaveState(text){$("saveState").textContent=text}let savingInvoice=null;
+async function saveInvoice(){
+ if(savingInvoice)return savingInvoice;
+ $("saveInvoiceBtn").disabled=true;
+ $("newInvoiceBtn").disabled=true;
+ savingInvoice=saveInvoiceInternal();
+ try{return await savingInvoice}
+ finally{savingInvoice=null;$("saveInvoiceBtn").disabled=false;$("newInvoiceBtn").disabled=false}
+}
+async function saveInvoiceInternal(){
+ if(!await requireCloud())return null;
  const invoice=collectInvoice();
- invoice.invoiceNumber=invoice.invoiceNumber.trim();
- if(!invoice.invoiceNumber || !invoice.customerName.trim() || !invoice.issueDate || !invoice.dueDate){
-   setSaveState("Enter an invoice number, customer and dates before saving");return;
+ if(!invoice.customerName.trim()||!invoice.issueDate||!invoice.dueDate){
+   setSaveState("Enter the customer and dates before saving");return null;
  }
- if(!invoice.lines.length || !invoice.lines.some(line=>line.description && line.quantity>0)){
-   setSaveState("Add at least one valid work item");return;
- }
- if(state.savedInvoiceNumber && state.savedInvoiceNumber!==invoice.invoiceNumber){
-   setSaveState("Invoice numbers cannot be renamed. Use New invoice.");return;
+ if(!invoice.lines.length||!invoice.lines.some(line=>line.description&&line.quantity>0)){
+   setSaveState("Add at least one valid work item");return null;
  }
  setSaveState("Saving to cloud...");
- const existing=state.invoices.find(x=>x.invoiceNumber===invoice.invoiceNumber);
- if(existing && !state.savedInvoiceNumber){setSaveState("Invoice number already exists. Open it from history to edit.");return;}
- const id=existing?.id || crypto.randomUUID();
- const {error}=await cloud.from("personal_invoices").upsert({
-   id,user_id:cloudUser.id,invoice_number:invoice.invoiceNumber,
-   currency:invoice.currency,total:Number(invoice.total.toFixed(2)),payload:invoice
- },{onConflict:"id"});
- if(error){setSaveState("Save failed: "+error.message);return;}
+ let id=null;
+ if(state.savedInvoiceNumber){
+   // Numbering is immutable. Edits reuse the original invoice's UUID.
+   invoice.invoiceNumber=state.savedInvoiceNumber;
+   id=state.savedInvoiceId||state.invoices.find(x=>x.invoiceNumber===invoice.invoiceNumber)?.id;
+   if(!id){setSaveState("Save failed: reload cloud history and reopen this invoice");return null;}
+   const {error}=await cloud.from("personal_invoices").upsert({
+     id,user_id:cloudUser.id,invoice_number:invoice.invoiceNumber,
+     currency:invoice.currency,total:Number(invoice.total.toFixed(2)),payload:invoice
+   },{onConflict:"id"});
+   if(error){setSaveState("Save failed: "+error.message);return null;}
+ }else{
+   // First save is the moment an invoice number is assigned. Fetch live server
+   // data and INSERT (never upsert), with unique-constraint collision retries.
+   // This prevents duplicates if two devices create invoices simultaneously.
+   const year=invoiceYear();
+   let created=false;
+   for(let attempt=0;attempt<10;attempt++){
+     const {number,error:sequenceError}=await nextCloudNumberFromServer(year);
+     if(sequenceError){setSaveState("Save failed: "+sequenceError.message);return null;}
+     const candidate=number;
+     const proposedId=crypto.randomUUID();
+     const payload={...invoice,invoiceNumber:candidate};
+     const {error}=await cloud.from("personal_invoices").insert({
+       id:proposedId,user_id:cloudUser.id,invoice_number:candidate,
+       currency:invoice.currency,total:Number(invoice.total.toFixed(2)),payload
+     });
+     if(!error){
+       id=proposedId;invoice.invoiceNumber=candidate;created=true;
+       break;
+     }
+     if(isDuplicateInvoiceError(error))continue;
+     setSaveState("Save failed: "+error.message);return null;
+   }
+   if(!created){
+     setSaveState("Number allocation was busy. Please try saving again.");
+     return null;
+   }
+ }
+ // Only update the active editor after Supabase has confirmed the save.
+ state.savedInvoiceId=id;
  state.savedInvoiceNumber=invoice.invoiceNumber;
- await loadHistory();renderPayments();
+ $("invoiceNumber").value=invoice.invoiceNumber;
+ updatePreview();
+ await loadHistory();
+ renderPayments();
  setSaveState("Saved to cloud");
  return id;
 }
@@ -57,17 +98,48 @@ function registerRows(){const headers=["Invoice Number","Status","Customer Name"
 // The configuration is not secret; the service-role key MUST NEVER enter the browser.
 let cloud=null,cloudUser=null,autoTimer=null,loading=false,revision=0;
 const setupKey="abInvoiceCloudConfig";
-const SUPABASE_IMPORT="./supabase-client.js";
+const SUPABASE_IMPORT="./supabase-client.js?v=20261117-sequence-v1";
 let cloudConfig;
 try{cloudConfig=JSON.parse(localStorage.getItem(setupKey)||"null")}catch{cloudConfig=null}
 function cloudStatus(message){$("cloudState").textContent=message;$("syncStatus").textContent=message;}
 function paymentSum(invoiceId){return state.payments.filter(p=>p.invoice_id===invoiceId).reduce((sum,p)=>sum+Number(p.amount||0),0)}
+// UK calendar year controls the prefix, regardless of the viewer's device timezone.
+function invoiceYear(){
+ return Number(new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/London",year:"numeric"}).format(new Date()));
+}
+function parseInvoiceSequence(number,year){
+ const m=/^AB-(\d{4})-(\d{4,})$/.exec(String(number||""));
+ if(!m||Number(m[1])!==year)return 0;
+ const sequence=Number(m[2]);
+ return Number.isSafeInteger(sequence)&&sequence>0?sequence:0;
+}
+function formatInvoiceNumber(year,sequence){
+ return "AB-"+year+"-"+String(sequence).padStart(4,"0");
+}
 function nextCloudNumber(){
- const year=new Date().getFullYear(),prefix="AB-"+year+"-";
- const used=new Set(state.invoices.map(x=>x.invoiceNumber));
- let number=1;
- while(used.has(prefix+String(number).padStart(4,"0")))number++;
- return prefix+String(number).padStart(4,"0");
+ const year=invoiceYear();
+ const max=state.invoices.reduce((high,row)=>Math.max(high,parseInvoiceSequence(row.invoiceNumber,year)),0);
+ return formatInvoiceNumber(year,max+1);
+}
+async function nextCloudNumberFromServer(year){
+ // Do not rely on localStorage or the register cache; this queries the live
+ // owner-scoped database. Page through all rows, rather than reusing gaps.
+ let max=0;
+ for(let from=0;;from+=500){
+   const {data,error}=await cloud.from("personal_invoices")
+     .select("invoice_number")
+     .order("invoice_number",{ascending:false})
+     .range(from,from+499);
+   if(error)return {number:null,error};
+   for(const row of data||[])max=Math.max(max,parseInvoiceSequence(row.invoice_number,year));
+   if(!data||data.length<500)break;
+ }
+ return {number:formatInvoiceNumber(year,max+1),error:null};
+}
+function isDuplicateInvoiceError(error){
+ return error?.code==="23505"||(
+   error?.status===409&&/duplicate key|unique constraint|23505/i.test(error.message||"")
+ );
 }
 async function initializeClient(url,key){
  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/.test(url)||!key){cloudStatus("Enter a valid Supabase URL and publishable/anon key.");return false}
@@ -87,7 +159,7 @@ async function applySession(session){
  const previous=cloudUser?.id;
  cloudUser=session?.user||null;
  $("signInBtn").hidden=!!cloudUser;$("signOutBtn").hidden=!cloudUser;
- if(!cloudUser){state.invoices=[];state.payments=[];state.savedInvoiceNumber=null;renderRegister();renderPayments();cloudStatus("Signed out");return}
+ if(!cloudUser){state.invoices=[];state.payments=[];state.savedInvoiceNumber=null;state.savedInvoiceId=null;renderRegister();renderPayments();cloudStatus("Signed out");return}
  if(previous!==cloudUser.id)await loadHistory();
 }
 async function initCloud(){
@@ -122,6 +194,8 @@ async function loadHistory(){
    }
    state.invoices=invoices.map(row=>({...row.payload,id:row.id,invoiceNumber:row.invoice_number,currency:row.currency,total:Number(row.total)}));
    state.payments=payments;
+   // A not-yet-saved draft gets an updated preview number after cloud history loads.
+   if(!state.savedInvoiceNumber){$("invoiceNumber").value=nextCloudNumber();updatePreview();}
    renderRegister();renderPayments();
    cloudStatus("Cloud connected — "+invoices.length+" invoices, "+payments.length+" payments");
  }catch(e){cloudStatus("History load failed: "+e.message)}
@@ -133,7 +207,7 @@ function openInvoice(id){
  for(const field of fields)$(field).value=row[field]??"";
  state.lines=(row.lines||[]).map(x=>({description:x.description||"",quantity:Number(x.quantity)||0,rate:Number(x.rate)||0}));
  if(!state.lines.length)state.lines=[{description:"",quantity:1,rate:0}];
- state.savedInvoiceNumber=row.invoiceNumber;renderLines();updatePreview();renderPayments();
+ state.savedInvoiceNumber=row.invoiceNumber;state.savedInvoiceId=row.id;renderLines();updatePreview();renderPayments();
  setSaveState("Loaded from cloud");
  window.scrollTo({top:0,behavior:"smooth"});
 }
