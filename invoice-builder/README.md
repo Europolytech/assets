@@ -5,6 +5,7 @@ Private, cloud-backed invoice and transaction history for the existing static in
 ## Features
 - GBP, EUR, USD, and CAD invoice currencies; totals retain their original denominated currency (no implicit FX conversion).
 - Save and reopen invoices from a private cloud register, searchable by number, customer, or status.
+- Automatic, immutable invoice numbers in the form `AB-YYYY-0001`, `AB-YYYY-0002`, etc. The prefix follows the current UK calendar year and the sequence restarts at 0001 each January. The number is assigned on the first successful cloud save and is never reused. Existing invoices keep their original identifiers.
 - Automatically save changes to **previously saved** invoices after 1.2 seconds of inactivity while signed in. New invoices require one initial **Save invoice** action.
 - Record individual payments with date, method, reference and amount, display amounts paid and outstanding balance.
 - Export CSV / Excel invoice register and full JSON invoice backup, PDF/print, and prefilled email draft.
@@ -37,7 +38,8 @@ The existing project is hosted from static files (`index.html`, `script.js`, `st
 
 ## Caveats
 - Currency selection is denomination, not automatic exchange conversion. An invoice with recorded payments cannot change currency.
-- Invoice numbers are checked against the cloud register; simultaneous creation by multiple tabs might still collide. The database's unique `(user_id, invoice_number)` constraint prevents duplicate stored identifiers.
+- The next number is calculated from the **highest existing sequence for the current year in Supabase**, not from localStorage or the count of invoices. When simultaneous tabs/devices attempt the same number, Supabase's existing unique `(user_id, invoice_number)` constraint rejects one insert; the application refreshes and retries with the next available number. Unsaved previews show a provisional number until the first successful save.
+- No new database migration is necessary: the existing `personal_invoices_user_number_key` unique constraint already enforces per-account uniqueness. Sequences are per authenticated account, not globally across unrelated users. Gaps can occur only if records are removed outside the normal application or imported out of order.
 - Status selection is user-maintained, not automatically changed on payment.
 - The **Send by email** button opens a composed `mailto:` draft and does not attach the PDF or send automatically. Use PDF/Print to save a PDF and attach it manually.
 - This is a personal invoicing utility, not a certified accounting or tax invoicing platform.
