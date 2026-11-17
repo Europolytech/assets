@@ -57,7 +57,7 @@ function registerRows(){const headers=["Invoice Number","Status","Customer Name"
 // The configuration is not secret; the service-role key MUST NEVER enter the browser.
 let cloud=null,cloudUser=null,autoTimer=null,loading=false,revision=0;
 const setupKey="abInvoiceCloudConfig";
-const SUPABASE_IMPORT="https://esm.sh/@supabase/supabase-js@2";
+const SUPABASE_IMPORT="./supabase-client.js";
 let cloudConfig;
 try{cloudConfig=JSON.parse(localStorage.getItem(setupKey)||"null")}catch{cloudConfig=null}
 function cloudStatus(message){$("cloudState").textContent=message;$("syncStatus").textContent=message;}
