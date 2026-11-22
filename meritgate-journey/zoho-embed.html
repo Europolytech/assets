@@ -1,0 +1,30 @@
+<!-- MeritGate Learner Journey | Zoho Sites Code Snippet -->
+<div id="meritgate-journey-embed" style="width:100%;max-width:1240px;margin:0 auto;">
+  <iframe
+    id="meritgate-journey-iframe"
+    src="https://europolytech.github.io/assets/meritgate-journey/?embed=1"
+    title="MeritGate interactive learner journey"
+    loading="lazy"
+    scrolling="auto"
+    referrerpolicy="strict-origin-when-cross-origin"
+    style="display:block;width:100%;height:1650px;border:0;background:#F7F8F6;border-radius:16px;overflow:hidden;"
+    allowfullscreen>
+  </iframe>
+</div>
+<script>
+(function(){
+  var frame=document.getElementById("meritgate-journey-iframe");
+  if(!frame)return;
+  window.addEventListener("message",function(event){
+    if(event.origin!=="https://europolytech.github.io")return;
+    if(event.source!==frame.contentWindow)return;
+    if(!event.data||event.data.type!=="MERITGATE_JOURNEY_HEIGHT")return;
+    var height=Number(event.data.height);
+    if(Number.isFinite(height)&&height>=500&&height<=20000){
+      frame.style.height=(Math.ceil(height)+6)+"px";
+    }
+  });
+})();
+</script>
+<!-- If Zoho strips scripts, the iframe remains usable with its internal scrolling.
+     GitHub Pages must be enabled for the Europolytech/assets repository. -->
