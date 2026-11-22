@@ -36,11 +36,11 @@ If the expected GitHub Pages URL shows 404, review the Pages settings and deploy
 
 ## Visual and functional features
 
-- Six clickable chapters: Discover, Connect, Enrol, Learn, Merit review, Progress.
+- Six clickable chapters: Discover, Register, Apply, Merit review, Start together, Progress.
 - Keyboard-accessible navigation with Arrow, Home and End keys.
 - Chapter-specific details: learner touchpoints, behind-the-scenes operations, milestones and assurances.
-- Scholarship fork: conditional Porto experience vs continuing online.
-- Both paths converge on successful assessment and qualification progression.
+- Scholarship fork: on-campus Porto scholar versus online learner, both starting the same live class timetable.
+- Illustrated 2027 milestone timeline: planned merit-based scholarship results on 12 March, synchronous hybrid intake on 12 April, and the eight-week Porto experience during April–June.\n- Illustrated hybrid classroom: on-campus scholars and online students share live teaching, with Moodle supporting asynchronous learning and assignments.\n- Both paths converge on successful assessment and qualification progression.
 - Navy #061C32, teal #006F69, gold #E8C369, ivory #FAF9F6, slate #526174.
 - Reduced motion support, semantic markup and visible keyboard focus.
 - Direct free-expression-of-interest button using the confirmed Zoho Forms URL.
@@ -50,7 +50,7 @@ If the expected GitHub Pages URL shows 404, review the Pages settings and deploy
 
 The page explains the **proposed programme experience**. It is not a binding admissions offer or scholarship guarantee. Paid enrolment, the final scholarship package, residential activity and academic delivery remain subject to the relevant authorisations and published policies.
 
-The March 2027 intake is labelled planned. Any qualification requires successful assessment. Scholarship selection is merit-based rather than random. Study and travel permissions are assessed separately.
+The first academic intake is planned for **12 April 2027**, with merit-based scholarship results planned for **12 March 2027**. Both participation modes start together in synchronous hybrid classes, supported by Moodle. These dates remain subject to applicable authorisations and published programme terms. Any qualification requires successful assessment. Scholarship selection is merit-based rather than random. Study and travel permissions are assessed separately.
 
 The current education and scholarship information is at:
 https://www.europolytech.academy/meritgate
