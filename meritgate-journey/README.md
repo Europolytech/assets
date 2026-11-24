@@ -5,7 +5,7 @@ A self-contained responsive, interactive visual guide for MeritGate by EuroPolyt
 ## Files
 
 - index.html — standalone website, complete CSS and JavaScript, no build step.
-- meritgate-logo.svg — official MeritGate shield supplied by the Academy, self-contained with an embedded optimised WebP image; used in the site header, hero and favicon.
+- meritgate-logo.svg — official MeritGate shield supplied by the Academy, embedded as a compact WebP; used only in the page header and browser favicon.
 - zoho-embed.html — copy/paste Zoho Sites iframe snippet, with secure auto-resizing.
 - README.md — these instructions.
 
@@ -62,4 +62,4 @@ Chapter content lives in the JavaScript data array near the end of index.html.
 Two scholarship outcomes are in the routes object.
 Modify published programme figures or scholarship details only when the authoritative policies have been approved.
 
-The official MeritGate shield logo is used throughout the page in place of the previous placeholder monogram and gateway illustration. The `meritgate-logo.svg` asset is self-contained and loads locally from the same GitHub Pages directory. Keep this logo file alongside `index.html` when deploying.
+The official MeritGate shield logo is displayed only in the top navigation, replacing the previous placeholder monogram. The large hero illustration has been intentionally removed. The `meritgate-logo.svg` asset is self-contained and loads locally from the same GitHub Pages directory. Keep this logo file alongside `index.html` when deploying.
